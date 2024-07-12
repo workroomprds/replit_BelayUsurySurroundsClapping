@@ -41,7 +41,7 @@ class Base15:
             return integer_result
 
         fractional_result = "."
-        precision = 6  # Number of decimal places to calculate
+        precision = 6
         
         for _ in range(precision):
             fractional_part *= 15
@@ -49,30 +49,34 @@ class Base15:
             fractional_result += self.digits[digit]
             fractional_part -= digit
 
-        # Round the last digit
-        if fractional_part >= 0.5:
-            last_digit = self.digits.index(fractional_result[-1])
-            if last_digit == 14:  # If the last digit is 'E'
-                fractional_result = fractional_result[:-1] + '0'
-                # Propagate carry
-                for i in range(len(fractional_result) - 2, 0, -1):
-                    if fractional_result[i] == 'E':
-                        fractional_result = fractional_result[:i] + '0' + fractional_result[i+1:]
-                    else:
-                        next_digit = self.digits[self.digits.index(fractional_result[i]) + 1]
-                        fractional_result = fractional_result[:i] + next_digit + fractional_result[i+1:]
-                        break
-                else:
-                    # If we've carried all the way to the integer part
-                    integer_result = self._convert_integer(int(integer_result) + 1)
-            else:
-                fractional_result = fractional_result[:-1] + self.digits[last_digit + 1]
-
-        # Remove trailing zeros
+        # Round the fractional part
         fractional_result = fractional_result.rstrip("0")
-        
+        if len(fractional_result) > 1:
+            rounded, carry = self._round_fractional(fractional_result[1:])
+            if carry:
+                integer_result = self._convert_integer(int(integer_result) + 1)
+            fractional_result = "." + rounded
+
         # Remove trailing dot if there are no decimal places
         if fractional_result == ".":
             return integer_result
         
         return integer_result + fractional_result
+
+    def _round_fractional(self, fractional):
+        rounded = ""
+        carry = 0
+        for digit in reversed(fractional):
+            value = self.digits.index(digit) + carry
+            if value >= 15:
+                carry = 1
+                value -= 15
+            else:
+                carry = 0
+            rounded = self.digits[value] + rounded
+        
+        # Check if we need to round up
+        if len(rounded) > 0 and self.digits.index(rounded[0]) >= 8:
+            return self._round_fractional("1" + rounded)[0], 1
+        
+        return rounded.rstrip("0"), carry
