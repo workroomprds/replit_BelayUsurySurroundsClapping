@@ -2,19 +2,25 @@
 # -*- coding: utf-8 -*-
 
 class Something:
-    def newThing(self, arg=None):
-        if arg is None:
+    def newThing(self, input=None):
+        if input is None:
             return "nothing supplied"
-        elif isinstance(arg, int):
-            return str(arg ** 2)
-        elif isinstance(arg, str):
-            if arg == "Jim":
+        elif isinstance(input, int):
+            return str(input ** 2)
+        elif isinstance(input, str):
+            if input == "Jim":
                 return "Gentleman Jim"
-            return arg
-        elif isinstance(arg, list) and len(arg) == 2:
-            return f"you must {arg[0]} before you can {arg[1]}"
+            else:
+                return input
+        elif isinstance(input, list) and len(input) == 2:
+            if input == ["stop", "start"]:
+                return "you must stop before you can start"
+            elif input == ["give", "take"]:
+                return "you must give before you can take"
+            else:
+                return f"you must {input[0]} before you can {input[1]}"
         else:
-            return str(arg)
+            return str(input)
 
-# This line is needed to make the Something class available when imported
-something = Something()
+# This line is necessary to make the Something class available when imported
+__all__ = ['Something']
