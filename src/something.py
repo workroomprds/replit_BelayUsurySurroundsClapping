@@ -16,5 +16,5 @@ class Something:
         else:
             return str(input)
 
-# This line is necessary to make the Something class available when imported
+# This line is needed to make the Something class available when imported
 something = Something()
