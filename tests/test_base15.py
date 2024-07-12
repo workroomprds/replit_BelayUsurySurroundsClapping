@@ -15,3 +15,4 @@ def test_convertDecimalToBase15():
 	assert subject.convertDecimalToBase15(10) == "A"
 	assert subject.convertDecimalToBase15(15) == "10"
 	assert subject.convertDecimalToBase15(16) == "11"
+	assert subject.convertDecimalToBase15(150) == "A0"
