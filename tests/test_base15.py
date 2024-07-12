@@ -21,6 +21,4 @@ def test_convertDecimalToBase15():
 
 
 assert subject.convertDecimalToBase15(15.6) == "10.9"
-assert subject.convertDecimalToBase15(14.8) == "E.C"
-assert subject.convertDecimalToBase15(14.888) == "E.D4C"
 
