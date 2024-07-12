@@ -62,8 +62,9 @@ run_tests
 
 # Set up "magic loop" to call LLM and run tests again
 max_attempts=2
-attempt=1
-while [ $attempt -le $max_attempts ] && [ $pytest_exit_code -ne 0 ] ; do
+attempt=0
+while [ $attempt -lt $max_attempts ] && [ $pytest_exit_code -ne 0 ] ; do
+	      attempt=$((attempt+1))
         echo "Attempt $attempt"
         if [ $attempt -le $max_attempts ]; then
                 echo "Attempting to generate new code with LLM"
@@ -75,8 +76,7 @@ while [ $attempt -le $max_attempts ] && [ $pytest_exit_code -ne 0 ] ; do
                         fi
                 fi
         fi
-        attempt=$((attempt+1))
-done
+ done
 
 if [ $attempt -ne 0 ] && [ $pytest_exit_code -eq 0 ]; then
 		commitMessage="AI generated changes to $source_file to pass tests in $test_file"
