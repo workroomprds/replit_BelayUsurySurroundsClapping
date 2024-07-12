@@ -67,7 +67,6 @@ while [ $attempt -lt $max_attempts ] && [ $pytest_exit_code -ne 0 ] ; do
 	      attempt=$((attempt+1))
         echo "Attempt $attempt"
         if [ $attempt -le $max_attempts ]; then
-                echo "Attempting to generate new code with LLM"
                 call_llm
                 if [ $? -eq 0 ]; then
                         run_tests
