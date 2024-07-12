@@ -77,9 +77,10 @@ while [ $attempt -lt $max_attempts ] && [ $pytest_exit_code -ne 0 ] ; do
         fi
  done
 
+# commit changes if new code passes tests
 if [ $attempt -ne 0 ] && [ $pytest_exit_code -eq 0 ]; then
 		commitMessage="AI generated changes to $source_file to pass tests in $test_file"
-		sh -c "git add $source_file $test_file && git commit -m \"$commitMessage\""
+		git add $source_file $test_file && git commit -m "$commitMessage"
 		if [ $? -eq 0 ]; then
 			echo "Your tests, and the generated source, have been committed to the repository"
 		else
@@ -89,7 +90,7 @@ fi
 
 # closing messages
 if [ $attempt -gt $max_attempts ]; then
-        echo "Maximum attempts reached"
+        echo "Maximum attempts reached ($max_attempts)"
         if [ $pytest_exit_code -ne 0 ]; then
                 echo "Exiting as code does not pass tests"
                 exit 1
