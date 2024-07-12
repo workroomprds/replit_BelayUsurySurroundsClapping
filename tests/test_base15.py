@@ -10,3 +10,5 @@ def test_availableCalls():
 
 def test_convertDecimalToBase15():
 	assert subject.convertDecimalToBase15(1) == 1
+	assert subject.convertDecimalToBase15(0) == 0
+	assert subject.convertDecimalToBase15(1) == 1
