@@ -23,4 +23,4 @@ class Something:
             return str(input)
 
 # This line is necessary to make the Something class available when imported
-__all__ = ['Something']
+something = Something()
