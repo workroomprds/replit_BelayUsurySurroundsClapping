@@ -9,7 +9,7 @@ class Something:
             return str(input ** 2)
         elif isinstance(input, str):
             if input == "Jim":
-                return "Gentleman Jim"
+                return "Gentleman Jack"
             else:
                 return input
         elif isinstance(input, list) and len(input) == 2:
