@@ -22,5 +22,5 @@ class Something:
         else:
             return str(input)
 
-# This line is necessary to make the Something class available when imported
-something = Something()
+# This line is needed to make the Something class available when imported
+__all__ = ['Something']
