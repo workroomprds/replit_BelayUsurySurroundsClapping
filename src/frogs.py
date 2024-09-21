@@ -3,10 +3,13 @@
 
 class Frogs:
     def __init__(self):
-        pass
+        self.frogs = []
 
     def newFrog(self):
-        pass
+        self.frogs.append("Frog")
+
+    def getFrogs(self):
+        return self.frogs
 
 if __name__ == "__main__":
     frogs = Frogs()

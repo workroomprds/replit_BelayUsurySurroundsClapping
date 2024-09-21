@@ -8,3 +8,4 @@ def subject():
 
 def test_availableCalls(subject):
 	assert callable(getattr(subject, "newFrog", None))
+	assert callable(getattr(subject, "getFrogs", None))
