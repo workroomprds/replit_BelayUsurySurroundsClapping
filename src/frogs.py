@@ -11,5 +11,8 @@ class Frogs:
     def getFrogs(self):
         return self.frogs
 
+    def countFrogs(self):
+        return len(self.frogs)
+
 if __name__ == "__main__":
     frogs = Frogs()

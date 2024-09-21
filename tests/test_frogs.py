@@ -18,3 +18,9 @@ def test_newFrog(subject):
 	testFrog = {"name": "frog1"}
 	subject.newFrog(testFrog)
 	assert len(subject.getFrogs()) == 1
+
+def test_countFrogs(subject):
+	assert subject.getFrogs() == []
+	testFrog = {"name": "frog1"}
+	subject.newFrog(testFrog)
+	assert subject.countFrogs() == 1
