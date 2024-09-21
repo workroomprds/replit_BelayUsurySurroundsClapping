@@ -9,6 +9,10 @@ def subject():
 def test_availableCalls(subject):
 	assert callable(getattr(subject, "newFrog", None))
 	assert callable(getattr(subject, "getFrogs", None))
+	assert callable(getattr(subject, "findFirstFrogByName", None))
+	assert callable(getattr(subject, "findIndexOfFirstFrogByName", None))
+	assert callable(getattr(subject, "getFrogByIndex", None))
+
 
 def test_getFrogs(subject):
 	assert subject.getFrogs() == []
