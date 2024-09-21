@@ -17,13 +17,13 @@ class Frogs:
     def findFirstFrogByName(self, name):
         for frog in self.frogs:
             if frog.get('name') == name:
-                return frog
+                return self.frogs.index(frog)
         return None
 
     def findIndexOfFirstFrogByName(self, name):
-        for index, frog in enumerate(self.frogs):
+        for i, frog in enumerate(self.frogs):
             if frog.get('name') == name:
-                return index
+                return i
         return -1
 
     def getFrogByIndex(self, index):

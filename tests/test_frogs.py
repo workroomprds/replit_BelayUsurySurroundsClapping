@@ -28,3 +28,13 @@ def test_countFrogs(subject):
 	testFrog = {"name": "frog1"}
 	subject.newFrog(testFrog)
 	assert subject.countFrogs() == 1
+
+def test_findFirstFrogByName(subject):
+	testFrog1 = {"name": "frog1"}
+	subject.newFrog(testFrog1)
+	testFrog2 = {"name": "frog1"}
+	subject.newFrog(testFrog2)
+	testFrog3 = {"name": "frog3"}
+	subject.newFrog(testFrog3)
+	assert subject.findFirstFrogByName("frog3") == 2
+	
