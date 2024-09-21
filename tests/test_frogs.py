@@ -7,3 +7,4 @@ subject = frogs.Frogs()
 
 def test_availableCalls():
 	assert callable(getattr(subject, "newFrog", None))
+	assert callable(getattr(subject, "getFrogs", None))

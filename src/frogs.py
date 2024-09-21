@@ -3,7 +3,12 @@
 
 class Frogs:
     def __init__(self):
-        pass
+        self.frogs = []
 
     def newFrog(self):
-        pass
+        frog = {}  # You can expand this to include frog properties if needed
+        self.frogs.append(frog)
+        return frog
+
+    def getFrogs(self):
+        return self.frogs
