@@ -9,3 +9,12 @@ def subject():
 def test_availableCalls(subject):
 	assert callable(getattr(subject, "newFrog", None))
 	assert callable(getattr(subject, "getFrogs", None))
+
+def test_getFrogs(subject):
+	assert subject.getFrogs() == []
+
+def test_newFrog(subject):
+	assert subject.getFrogs() == []
+	testFrog = {"name": "frog1"}
+	subject.newFrog(testFrog)
+	assert len(subject.getFrogs()) == 1

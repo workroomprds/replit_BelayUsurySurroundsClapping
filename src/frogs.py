@@ -5,8 +5,8 @@ class Frogs:
     def __init__(self):
         self.frogs = []
 
-    def newFrog(self):
-        self.frogs.append("Frog")
+    def newFrog(self, frog):
+        self.frogs.append(frog)
 
     def getFrogs(self):
         return self.frogs
