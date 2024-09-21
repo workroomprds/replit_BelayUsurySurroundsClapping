@@ -14,8 +14,13 @@ class Frogs:
     def countFrogs(self):
         return len(self.frogs)
 
-    def findFrog(self, name):
+    def findFirstFrogByName(self, name):
         for frog in self.frogs:
             if frog.get('name') == name:
                 return frog
+        return None
+
+    def getFrogByIndex(self, index):
+        if 0 <= index < len(self.frogs):
+            return self.frogs[index]
         return None

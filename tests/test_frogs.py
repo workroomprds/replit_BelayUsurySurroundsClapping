@@ -11,7 +11,8 @@ def test_availableCalls():
 	assert callable(getattr(subject, "newFrog", None))
 	assert callable(getattr(subject, "getFrogs", None))
 	assert callable(getattr(subject, "countFrogs", None))
-	assert callable(getattr(subject, "findFrog", None))
+	assert callable(getattr(subject, "findFirstFrogByName", None))
+	assert callable(getattr(subject, "getFrogByIndex", None))
 
 def test_getFrogs():
 	subject = frogs.Frogs()
