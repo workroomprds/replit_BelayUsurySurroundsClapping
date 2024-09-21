@@ -7,3 +7,6 @@ class Frogs:
 
     def newFrog(self):
         pass
+
+if __name__ == "__main__":
+    frogs = Frogs()
