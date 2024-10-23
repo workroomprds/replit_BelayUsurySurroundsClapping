@@ -36,11 +36,15 @@ test_contents="$(< $test_file)"
 
 # Function to message on success
 success_message() {
-	echo "All tests in $test_file passed – code in $source_file is ready for inspection"
+                coverage_output=$(coverage report -m "$source_file")
+                ##echo $coverage_output
+                coverage_percentage=$(echo "$coverage_output" | awk 'NR==5 {print $NF}')
+                echo "Coverage for $source_file: $coverage_percentage" 
+                echo "All tests in $test_file passed – code in $source_file is ready for inspection"
 }
 # Function to run tests and handle results
 run_tests() {
-        test_results="$(pytest --quiet --tb=line $test_file)"
+        test_results="$(pytest --cov --quiet --tb=line $test_file)"
         pytest_exit_code=$?
         echo "pytest_exit_code $pytest_exit_code"
         if [ $pytest_exit_code -eq 0 ]; then
@@ -96,6 +100,7 @@ if [ $attempt -ne 0 ] && [ $pytest_exit_code -eq 0 ]; then
 		else
 			echo "git commit failed with error $?"
 		fi
+
 fi
 
 # closing messages
@@ -105,6 +110,8 @@ if [ $attempt -gt $max_attempts ]; then
                 echo "Exiting as code does not pass tests"
                 exit 1
         else
+ 
                 success_message
+
         fi
 fi
