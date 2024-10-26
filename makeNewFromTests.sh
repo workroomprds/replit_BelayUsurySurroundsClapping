@@ -62,8 +62,10 @@ call_llm() { ## parameter 1 is new_conversation
         code_contents="$(< $source_file)"
         if [ "$1" = true ]; then
             continue_flag=""
+            echo "Starting new conversation"
         else
-            continue_flag="-c"
+            continue_flag="--continue"
+            echo "Continuing conversation"
         fi
         echo "Attempting to generate new code with LLM"
         llm -t rewrite_python_to_pass_tests "$continue_flag" --no-stream -p code  "$code_contents" -p tests "$test_contents" -p test_results "$test_results" '' > $source_file
@@ -83,13 +85,15 @@ run_tests
 # Set up "magic loop" to call LLM and run tests again
 max_attempts=3
 attempt=0
+new_conversation=true
 while [ $attempt -lt $max_attempts ] && [ $pytest_exit_code -ne 0 ] ; do
-	      attempt=$((attempt+1))
+	attempt=$((attempt+1))
         echo "Attempt $attempt"
         if [ $attempt -le $max_attempts ]; then
-                call_llm
+                call_llm $new_conversation
                 if [ $? -eq 0 ]; then
                         run_tests
+                        new_conversation = false
                         if [ $? -eq 0 ]; then
                                 break
                         fi
@@ -116,8 +120,6 @@ if [ $attempt -gt $max_attempts ]; then
                 echo "Exiting as code does not pass tests"
                 exit 1
         else
- 
                 success_message
-
         fi
 fi
