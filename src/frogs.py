@@ -15,9 +15,9 @@ class Frogs:
         return len(self.frogs)
 
     def findFirstFrogByName(self, name):
-        for frog in self.frogs:
+        for i, frog in enumerate(self.frogs):
             if frog.get('name') == name:
-                return self.frogs.index(frog)
+                return i
         return None
 
     def findIndexOfFirstFrogByName(self, name):
@@ -29,6 +29,12 @@ class Frogs:
     def getFrogByIndex(self, index):
         if 0 <= index < len(self.frogs):
             return self.frogs[index]
+        return None
+
+    def getFrogByName(self, name):
+        for frog in self.frogs:
+            if frog.get('name') == name:
+                return frog
         return None
 
 if __name__ == "__main__":
