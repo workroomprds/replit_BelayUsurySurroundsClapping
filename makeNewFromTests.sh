@@ -42,6 +42,7 @@ success_message() {
                 echo "Coverage for $source_file: $coverage_percentage" 
                 echo "All tests in $test_file passed – code in $source_file is ready for inspection"
 }
+
 # Function to run tests and handle results
 run_tests() {
         test_results="$(pytest --cov --quiet --tb=line $test_file)"
