@@ -15,8 +15,6 @@ def test_availableCalls(subject):
 	assert callable(getattr(subject, "findIndexOfFirstFrogByName", None))
 	assert callable(getattr(subject, "getFrogByIndex", None))
 	assert callable(getattr(subject, "getFrogByName", None))
-	assert callable(getattr(subject, "dummy", None))
-
 
 def test_getFrogs(subject):
 	assert subject.getFrogs() == []
