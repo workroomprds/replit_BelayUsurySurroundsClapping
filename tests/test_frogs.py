@@ -37,4 +37,3 @@ def test_findFirstFrogByName(subject):
 	testFrog3 = {"name": "frog3"}
 	subject.newFrog(testFrog3)
 	assert subject.findFirstFrogByName("frog3") == 2
-	
