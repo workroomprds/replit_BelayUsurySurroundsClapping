@@ -58,10 +58,15 @@ run_tests() {
         fi
 }
 # Function to call the LLM
-call_llm() {
+call_llm() { ## parameter 1 is new_conversation
         code_contents="$(< $source_file)"
+        if [ "$1" = true ]; then
+            continue_flag=""
+        else
+            continue_flag="-c"
+        fi
         echo "Attempting to generate new code with LLM"
-        llm -t rewrite_python_to_pass_tests -p code "$code_contents" -p tests "$test_contents" -p test_results "$test_results" '' > $source_file
+        llm -t rewrite_python_to_pass_tests "$continue_flag" --no-stream -p code  "$code_contents" -p tests "$test_contents" -p test_results "$test_results" '' > $source_file
         llm_exit_code=$?
         if [ $llm_exit_code -eq 0 ]; then
                 echo "LLM generated a new $source_file. Passing over to tests in $test_file"

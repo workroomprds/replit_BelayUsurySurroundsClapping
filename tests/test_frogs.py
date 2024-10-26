@@ -15,6 +15,7 @@ def test_availableCalls(subject):
 	assert callable(getattr(subject, "findIndexOfFirstFrogByName", None))
 	assert callable(getattr(subject, "getFrogByIndex", None))
 	assert callable(getattr(subject, "getFrogByName", None))
+	assert callable(getattr(subject, "dummy", None))
 
 
 def test_getFrogs(subject):
@@ -43,3 +44,13 @@ def test_findFirstFrogByName(subject):
 	testFrog3 = {"name": "frog3"}
 	subject.newFrog(testFrog3)
 	assert subject.findFirstFrogByName("frog3") == 2
+
+
+def test_getFrogByName(subject):
+	testFrog1 = {"name": "frog1"}
+	subject.newFrog(testFrog1)
+	testFrog2 = {"name": "frog2"}
+	subject.newFrog(testFrog2)
+	testFrog3 = {"name": "frog3"}
+	subject.newFrog(testFrog3)
+	assert subject.getFrogByName("frog2") == testFrog2

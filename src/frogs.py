@@ -37,5 +37,8 @@ class Frogs:
                 return frog
         return None
 
+    def dummy(self):
+        pass
+
 if __name__ == "__main__":
     frogs = Frogs()
