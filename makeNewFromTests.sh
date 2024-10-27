@@ -68,9 +68,7 @@ call_llm() { ## parameter 1 is new_conversation
             echo "Continuing conversation"
         fi
         echo "Attempting to generate new code with LLM"
-        set -x
         llm -t rewrite_python_to_pass_tests -p code "$code_contents" -p tests "$test_contents" -p test_results "$test_results"  "$continue_flag" --no-stream > $source_file
-        set +x
         llm_exit_code=$?
         if [ $llm_exit_code -eq 0 ]; then
                 echo "LLM generated a new $source_file. Passing over to tests in $test_file"
