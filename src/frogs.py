@@ -12,9 +12,9 @@ class Frogs:
         return self.frogs
 
     def findFirstFrogByName(self, name):
-        for index, frog in enumerate(self.frogs):
+        for i, frog in enumerate(self.frogs):
             if frog['name'] == name:
-                return index
+                return i
         return -1
 
     def findIndexOfFirstFrogByName(self, name):
