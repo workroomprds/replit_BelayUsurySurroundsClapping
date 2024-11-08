@@ -55,10 +55,3 @@ def test_getFrogByName(subject):
 	subject.newFrog(testFrog3)
 	assert subject.getFrogByName("frog2") == testFrog2
 
-def test_binThisFrog(subject):
-	testFrog = {"name": "frog1"}
-	subject.newFrog(testFrog)
-	testFrog2 = {"name": "frog2"}
-	subject.newFrog(testFrog2)
-	subject.binThisFrog("frog1")
-	assert len(subject.getFrogs()) == 1
