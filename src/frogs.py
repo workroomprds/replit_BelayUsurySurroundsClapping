@@ -31,10 +31,12 @@ class Frogs:
             return self.frogs[index]
         return None
 
+    def countFrogs(self):
+        return len(self.frogs)
+
     def deleteNamedFrog(self, name):
         index = self.findFirstFrogByName(name)
         if index != -1:
             del self.frogs[index]
-
-    def countFrogs(self):
-        return len(self.frogs)
+            return True
+        return False
