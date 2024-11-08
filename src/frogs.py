@@ -34,9 +34,8 @@ class Frogs:
     def countFrogs(self):
         return len(self.frogs)
 
-    def deleteNamedFrog(self, name):
-        index = self.findFirstFrogByName(name)
-        if index != -1:
-            del self.frogs[index]
+    def binThisFrog(self, frog):
+        if frog in self.frogs:
+            self.frogs.remove(frog)
             return True
         return False
