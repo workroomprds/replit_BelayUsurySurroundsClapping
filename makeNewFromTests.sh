@@ -10,46 +10,55 @@ readonly EXIT_NO_PARAMETER=1
 readonly EXIT_TEST_FILE_NOT_FOUND=2
 readonly EXIT_TEST_FILE_SYNTAX_ERROR=3
 readonly EXIT_TESTS_FAILED_AFTER_ITERATIONS=4
+readonly ALL_TESTS_PASSED_FIRST_TIME=5
+readonly LLM_TEMPLATE_GENERATE_CODE=rewrite_python_to_pass_tests
+
+numberOfArgs=$#
+firstParameter=$1
 
 # Check if a parameter is provided
-if [ $# -eq 0 ]; then
-        echo "Error: No parameter provided."
-        exit $EXIT_NO_PARAMETER
-fi
-# Get the module name from the parameter
-module="$1"
+checkParameters() {
+        if [ $numberOfArgs -eq 0 ]; then
+                echo "Error: No parameter provided."
+                exit $EXIT_NO_PARAMETER
+        fi
+}
 
-# Check if the test file exists
-test_file="$TEST_FILE_PREFIX$module"
-if [ ! -f "$test_file" ]; then
-        echo "Error: Test file $test_file does not exist."
-        exit $EXIT_TEST_FILE_NOT_FOUND
-fi
+# Check test file existence and syntax
+checkTestFile() {
+        #check if the test file exists
+         if [ ! -f "$test_file" ]; then
+                echo "Error: Test file $test_file does not exist."
+                exit $EXIT_TEST_FILE_NOT_FOUND
+        fi
+        
+        # check syntax of inbound test file
+        syntax_output=$(python -m py_compile "$test_file" 2>&1)
+        exit_code=$?
+        if [ -n "$exit_code" ] && [ "$exit_code" -ne 0 ]; then
+                echo "Syntax error detected in $test_file: not sending for generation"
+                echo "$syntax_output"
+                exit $EXIT_TEST_FILE_SYNTAX_ERROR
+        fi
+}
 
-# check syntax of inbound test file
-syntax_output=$(python -m py_compile "$test_file" 2>&1)
-exit_code=$?
-if [ -n "$exit_code" ] && [ "$exit_code" -ne 0 ]; then
-        echo "Syntax error detected in $test_file: not sending for generation"
-        echo "$syntax_output"
-        exit $EXIT_TEST_FILE_SYNTAX_ERROR
-fi
-# At this point, the spoecified test file is worthwhile
-#
-# Make a new (empty) source file if needed
-source_file="$SOURCE_FILE_PREFIX$module"
-if [ ! -f "$source_file" ]; then
-        echo "Source file $source_file does not exist. Creating an empty file."
-        touch "$source_file"
-fi
+# make an empty one if neccessary
+fixSourceFile() {
+        if [ ! -f "$source_file" ]; then
+                echo "Source file $source_file does not exist. Creating an empty file."
+                touch "$source_file"
+        fi
+}
 
-echo "Planning to change $source_file based on tests in $test_file"
+# no point in TDDing if the tests pass...
+exitIfTestsPassFirstTime() {
+        if [ $pytest_exit_code -eq 0 ]; then
+                echo "Tests already pass. No code generated. Exiting."
+                exit $ALL_TESTS_PASSED_FIRST_TIME
+        fi
+}
 
-
-# Extract tests from the test file
-test_contents="$(< "$test_file")"
-
-# Function to message on success
+# message on success
 success_message() {
                 coverage_output=$(coverage report -m "$source_file")
                 ##echo $coverage_output
@@ -58,8 +67,8 @@ success_message() {
                 echo "All tests in $test_file passed – code in $source_file is ready for inspection"
 }
 
-# Function to run tests and handle results
-run_tests() {
+# run tests / checks and handle results
+checkCode() {
         test_results="$(pytest --cov --quiet --tb=line "$test_file")"
         pytest_exit_code=$?
         echo "pytest_exit_code $pytest_exit_code"
@@ -72,18 +81,26 @@ run_tests() {
                 return 1
         fi
 }
-# Function to call the LLM
-call_llm() { ## parameter 1 is new_conversation
+
+# pass to AI via LLM tool
+replaceSourceWithGeneratedCode() { ## parameter 1 is new_conversation
+        # code_contents and test_results may be different each time
+        new_conversation_parm=$1
         code_contents="$(< "$source_file")"
-        if [ "$1" = true ]; then
-            continue_flag=
+        if [ "$new_conversation_parm" = true ]; then
+            continue_flag= #intentionally not set
             echo "Starting new conversation"
         else
             continue_flag="--continue"
             echo "Continuing conversation"
         fi
         echo "Attempting to generate new code with LLM"
-        llm -t rewrite_python_to_pass_tests -p code "$code_contents" -p tests "$test_contents" -p test_results "$test_results"  "$continue_flag" $STREAMING > "$source_file"
+        llm -t $LLM_TEMPLATE_GENERATE_CODE \
+                -p code "$code_contents" \
+                -p tests "$test_contents" \
+                -p test_results "$test_results"  \
+                "$continue_flag" $STREAMING \
+                > "$source_file"
         llm_exit_code=$?
         if [ $llm_exit_code -eq 0 ]; then
                 echo "LLM generated a new $source_file. Passing over to tests in $test_file"
@@ -94,20 +111,35 @@ call_llm() { ## parameter 1 is new_conversation
         fi
 }
 
-# Run initial tests
-run_tests
+# Do validation
+checkParameters
+# Get the module name from the parameter
+module=$firstParameter
+# Set file names
+test_file="$TEST_FILE_PREFIX$module"
+source_file="$SOURCE_FILE_PREFIX$module"
+# Check existence and syntax of test file
+checkTestFile
+# Extract tests from the test file
+test_contents="$(< "$test_file")"
+# Make a new (empty) source file if needed
+fixSourceFile
+# Run initial tests, and exit if they all work
+checkCode
+exitIfTestsPassFirstTime
 
 # Set up "magic loop" to call LLM and run tests again
 attempt=0
 new_conversation=true
+echo "Planning to change $source_file based on tests in $test_file"
 
 while [ $attempt -lt $MAX_ATTEMPTS ] && [ $pytest_exit_code -ne 0 ] ; do
 	attempt=$((attempt+1))
         echo "Attempt $attempt"
         if [ $attempt -le $MAX_ATTEMPTS ]; then
-                if call_llm "$new_conversation"; then
-                    if run_tests; then
-                        break
+                if replaceSourceWithGeneratedCode "$new_conversation"; then
+                    if checkCode; then
+                        break # drop out lof the loop if tests pass
                     fi
                     new_conversation=false
                 fi
