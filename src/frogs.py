@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+
 class Frogs:
+
     def __init__(self):
         self.frogs = []
 
@@ -33,3 +35,10 @@ class Frogs:
 
     def countFrogs(self):
         return len(self.frogs)
+
+    def deleteNamedFrog(self, name):
+        index = self.findFirstFrogByName(name)
+        if index != -1:
+            del self.frogs[index]
+            return True
+        return False
