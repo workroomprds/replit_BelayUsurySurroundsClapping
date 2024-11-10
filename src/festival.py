@@ -27,9 +27,9 @@ def festival(year, method):
         
         return date(year, month, day)
     elif method == FESTIVAL_WINTER:
-        for festival_date in winter_festival_dates:
-            if festival_date.year == year:
-                return festival_date
+        matching_dates = [d for d in winter_festival_dates if d.year == year]
+        if matching_dates:
+            return max(matching_dates)
         return date(year, 12, 25)
     else:
         raise ValueError("Invalid method")
