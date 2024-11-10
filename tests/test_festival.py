@@ -71,6 +71,9 @@ western_festival_dates = [
 
 winter_festival_dates =  [
   date(2024, 12, 25),
+  date(2023, 12, 26),
+  date(2022, 12, 31),
+  date(2021, 1, 1),
   date(2020, 12, 25)
 ]
 
@@ -79,7 +82,7 @@ def test_festival_western(festival_date):
 	assert festival_date == festival(festival_date.year, FESTIVAL_WESTERN)
 
 @pytest.mark.parametrize("festival_date", winter_festival_dates)
-def test_festival_wwinter(festival_date):
+def test_festival_winter(festival_date):
   assert festival_date == festival(festival_date.year, FESTIVAL_WINTER)
 
 def test_festival_bad_method():
