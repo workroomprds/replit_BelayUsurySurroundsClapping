@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from datetime import date
+from datetime import date, timedelta
 
 EASTER_WESTERN = 'western'
 EASTER_ORTHODOX = 'orthodox'
@@ -31,17 +31,18 @@ def easter(year, method=EASTER_WESTERN):
     l = (32 + 2 * e + 2 * i - h - k) % 7
     m = (a + 11 * h + 22 * l) // 451
 
+    month = (h + l - 7 * m + 114) // 31
+    day = ((h + l - 7 * m + 114) % 31) + 1
+    
+    easter_date = date(year, month, day)
+
     if method == EASTER_JULIAN:
-        # Julian calendar
-        month = (h + l - 7 * m + 114) // 31
-        day = ((h + l - 7 * m + 114) % 31) + 1
-        return date(year, month, day)
+        # For Julian Easter, we need to subtract 13 days from the Gregorian date
+        return easter_date - timedelta(days=13)
     elif method == EASTER_ORTHODOX:
-        # Orthodox Easter (Julian Easter + 13 days)
-        julian_easter = easter(year, EASTER_JULIAN)
-        return julian_easter.replace(day=julian_easter.day + 13)
-    else:
-        # Western (Gregorian) Easter
-        month = (h + l - 7 * m + 114) // 31
-        day = ((h + l - 7 * m + 114) % 31) + 1
-        return date(year, month, day)
+        # For Orthodox Easter, we need to add the difference between Gregorian and Julian calendars
+        century = year // 100
+        difference = 13 if century >= 20 else 12
+        return easter_date + timedelta(days=difference)
+    else:  # EASTER_WESTERN
+        return easter_date

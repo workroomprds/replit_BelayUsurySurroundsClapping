@@ -179,6 +179,16 @@ julian_easter_dates = [
 ]
 
 
+@pytest.mark.parametrize("easter_date", western_easter_dates)
+def test_easter_western(easter_date):
+	assert easter_date == easter(easter_date.year, EASTER_WESTERN)
+
+
+@pytest.mark.parametrize("easter_date", orthodox_easter_dates)
+def test_easter_orthodox(easter_date):
+	assert easter_date == easter(easter_date.year, EASTER_ORTHODOX)
+
+
 def test_easter_bad_method():
 	with pytest.raises(ValueError):
 		easter(1975, 4)
