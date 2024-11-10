@@ -1,9 +1,13 @@
 #!/bin/bash
 
+## !! Check what's going on with swecond time through – I think it\s missing a "". USe llm logs -n 15 to look at last 15 logs
+
 # configuration
 readonly MAX_ATTEMPTS=3
 readonly TEST_FILE_PREFIX="./tests/test_"
 readonly SOURCE_FILE_PREFIX="./src/"
+readonly LLM_TEMPLATE=rewrite_python_to_pass_tests
+readonly LLM_MODEL="claude-3.5-sonnet" ## comment out to use default, or if template contains model. Keep the -m at start
 #readonly STREAMING="--no-stream"  ## comment out to stream
 readonly EXIT_SUCCESS=0
 readonly EXIT_NO_PARAMETER=1
@@ -11,11 +15,11 @@ readonly EXIT_TEST_FILE_NOT_FOUND=2
 readonly EXIT_TEST_FILE_SYNTAX_ERROR=3
 readonly EXIT_TESTS_FAILED_AFTER_ITERATIONS=4
 readonly ALL_TESTS_PASSED_FIRST_TIME=5
-readonly LLM_TEMPLATE_GENERATE_CODE=rewrite_python_to_pass_tests
 
 numberOfArgs=$#
 firstParameter=$1
 
+## FUNCTIONS
 # Check if a parameter is provided
 checkParameters() {
         if [ $numberOfArgs -eq 0 ]; then
@@ -85,21 +89,24 @@ checkCode() {
 # pass to AI via LLM tool
 replaceSourceWithGeneratedCode() { ## parameter 1 is new_conversation
         # code_contents and test_results may be different each time
-        new_conversation_parm=$1
         code_contents="$(< "$source_file")"
-        if [ "$new_conversation_parm" = true ]; then
-            continue_flag= #intentionally not set
+        if [ "$new_conversation" ]; then
+            continue_flag="" #intentionally not set
             echo "Starting new conversation"
         else
             continue_flag="--continue"
             echo "Continuing conversation"
         fi
+        
         echo "Attempting to generate new code with LLM"
-        llm -t $LLM_TEMPLATE_GENERATE_CODE \
+        llm -t $LLM_TEMPLATE \
+                $llmModelParameter \
                 -p code "$code_contents" \
                 -p tests "$test_contents" \
-                -p test_results "$test_results"  \
-                "$continue_flag" $STREAMING \
+                -p test_results "$test_results" \
+                -p input "" \
+                "$continue_flag" \
+                $STREAMING \
                 > "$source_file"
         llm_exit_code=$?
         if [ $llm_exit_code -eq 0 ]; then
@@ -111,6 +118,20 @@ replaceSourceWithGeneratedCode() { ## parameter 1 is new_conversation
         fi
 }
 
+# commit changes if new code passes tests
+commit_changes () {
+        commitMessage="AI generated changes to $source_file to pass tests in $test_file"
+
+        git add "$source_file" "$test_file" && git commit -m "$commitMessage"
+        gitStatus=$?
+        if [ $gitStatus ] ; then
+                echo "Your tests, and the generated source, have been committed to the repository"
+        else
+                echo "While the generated code passes the tests, git stage or commit failed with error: $gitStatus . Perhaps the files match those already commited, so «git add» did nothing?"
+        fi
+}
+
+## MAIN starts here
 # Do validation
 checkParameters
 # Get the module name from the parameter
@@ -124,6 +145,12 @@ checkTestFile
 test_contents="$(< "$test_file")"
 # Make a new (empty) source file if needed
 fixSourceFile
+# Set model paramater for llm
+if [ -n "$LLM_MODEL" ]; then
+        llmModelParameter="-m $LLM_MODEL"
+        else
+        llmModelParameter=## intentionally not set
+fi
 # Run initial tests, and exit if they all work
 checkCode
 exitIfTestsPassFirstTime
@@ -139,35 +166,16 @@ while [ $attempt -lt $MAX_ATTEMPTS ] && [ $pytest_exit_code -ne 0 ] ; do
         if [ $attempt -le $MAX_ATTEMPTS ]; then
                 if replaceSourceWithGeneratedCode "$new_conversation"; then
                     if checkCode; then
-                        break # drop out lof the loop if tests pass
+                        commit_changes
+                        success_messages
+                        exit $EXIT_SUCCESS # leave if tests pass
                     fi
                     new_conversation=false
                 fi
         fi
  done
 
-# commit changes if new code passes tests
-if [ $attempt -ne 0 ] && [ $pytest_exit_code -eq 0 ]; then
-
-        commitMessage="AI generated changes to $source_file to pass tests in $test_file"
-
-        git add "$source_file" "$test_file" && git commit -m "$commitMessage"
-        gitStatus=$?
-        if [ $gitStatus -eq 0 ] ; then
-                echo "Your tests, and the generated source, have been committed to the repository"
-        else
-                echo "While the generated code passes the tests, git stage or commit failed with error: $gitStatus . Perhaps the files match those already commited, so «git add» did nothing?"
-        fi
-fi
-
 # closing messages
-if [ $attempt -gt $MAX_ATTEMPTS ]; then
-        echo "Maximum attempts reached ($MAX_ATTEMPTS)"
-        if [ $pytest_exit_code -ne 0 ]; then
-                echo "Exiting as generated code still does not pass tests"
-                exit $EXIT_TESTS_FAILED_AFTER_ITERATIONS
-        else
-                success_message
-                exit $EXIT_SUCCESS
-        fi
-fi
+echo "Maximum attempts reached ($MAX_ATTEMPTS)"
+echo "Exiting as generated code still does not pass tests"
+exit $EXIT_TESTS_FAILED_AFTER_ITERATIONS
