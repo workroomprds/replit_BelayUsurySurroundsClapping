@@ -1,5 +1,5 @@
 from src.festival import festival
-from src.festival import FESTIVAL_WESTERN
+from src.festival import FESTIVAL_WESTERN, FESTIVAL_WINTER
 
 from datetime import date
 import pytest
@@ -69,11 +69,18 @@ western_festival_dates = [
     date(2050, 4, 10)
 ]
 
-
+winter_festival_dates =  [
+  date(2024, 12, 25),
+  date(2020, 12, 25)
+]
 
 @pytest.mark.parametrize("festival_date", western_festival_dates)
 def test_festival_western(festival_date):
 	assert festival_date == festival(festival_date.year, FESTIVAL_WESTERN)
+
+@pytest.mark.parametrize("festival_date", winter_festival_dates)
+def test_festival_wwinter(festival_date):
+  assert festival_date == festival(festival_date.year, FESTIVAL_WINTER)
 
 def test_festival_bad_method():
 	with pytest.raises(ValueError):
