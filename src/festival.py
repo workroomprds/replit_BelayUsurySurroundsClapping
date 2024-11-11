@@ -2,16 +2,21 @@
 
 from datetime import date
 from enum import Enum, auto
+from typing import Callable
 
 class FestivalType(Enum):
     WESTERN = auto()
     WINTER = auto()
 
 def festival(year: int, festival_type: FestivalType) -> date:
-    if festival_type == FestivalType.WESTERN:
-        return calculate_western_festival(year)
-    elif festival_type == FestivalType.WINTER:
-        return calculate_winter_festival(year)
+    festival_calculators = {
+        FestivalType.WESTERN: calculate_western_festival,
+        FestivalType.WINTER: calculate_winter_festival
+    }
+    
+    calculator = festival_calculators.get(festival_type)
+    if calculator:
+        return calculator(year)
     else:
         raise ValueError("Invalid festival type")
 
@@ -33,12 +38,11 @@ def calculate_western_festival(year: int) -> date:
     return date(year, month, day)
 
 def calculate_winter_festival(year: int) -> date:
-    if year == 2022:
-        return date(year, 12, 31)
-    elif year == 2021:
-        return date(year, 1, 1)
-    else:
-        return date(year, 12, 25)
+    special_dates = {
+        2022: date(2022, 12, 31),
+        2021: date(2021, 1, 1)
+    }
+    return special_dates.get(year, date(year, 12, 25))
 
 # For backwards compatibility
 FESTIVAL_WESTERN = FestivalType.WESTERN
