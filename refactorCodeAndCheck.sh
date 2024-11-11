@@ -16,7 +16,7 @@ readonly EXIT_NO_PARAMETER=1
 readonly EXIT_TEST_FILE_NOT_FOUND=2
 readonly EXIT_TEST_FILE_SYNTAX_ERROR=3
 readonly EXIT_TESTS_FAILED_AFTER_ITERATIONS=4
-readonly ALL_TESTS_PASSED_FIRST_TIME=5
+readonly SOME_TESTS_FAILED_FIRST_TIME=5
 
 numberOfArgs=$#
 firstParameter=$1
@@ -57,11 +57,9 @@ fixSourceFile() {
 }
 
 # no point in TDDing if the tests pass...
-exitIfTestsPassFirstTime() {
-        if [ $pytest_exit_code -eq 0 ]; then
-                echo "Tests already pass. No code generated. Exiting."
-                exit $ALL_TESTS_PASSED_FIRST_TIME
-        fi
+exitIfTestsFailFirstTime() {
+        echo "Tests currently fail. Refactoring not attempted. Exiting."
+        exit $SOME_TESTS_FAILED_FIRST_TIME
 }
 
 # run tests / checks and handle results
@@ -69,23 +67,31 @@ checkCode() {
         test_results="$(pytest --cov --quiet --tb=line "$test_file")"
         pytest_exit_code=$?
         echo "pytest_exit_code $pytest_exit_code"
-        if [ $pytest_exit_code -eq 0 ]; then
-                exit_triumphantly
+        if [ "$first_time_through" -eq $TRUE ]; then
+                if [ $pytest_exit_code -ne 0 ]; then
+                        exitIfTestsFailFirstTime
+                else
+                        echo "Tests pass. Continuing with refactoring"
+                fi
         else
-                echo "Tests failed."
-                echo "$test_results"
-                return 1
+                if [ $pytest_exit_code -eq 0 ]; then
+                        exit_triumphantly
+                else
+                        echo "Tests failed."
+                        echo "$test_results"
+                        return 1
+                fi
         fi
 }
 
 # pass to AI via LLM tool
-replaceSourceWithGeneratedCode() { ## parameter 1 is new_conversation
+replaceSourceWithGeneratedCode() { ## parameter 1 is first_time_through
         # code_contents and test_results may be different each time
         code_contents="$(< "$source_file")"
-        if [ "$new_conversation" -eq $TRUE ]; then
+        if [ "$first_time_through" -eq $TRUE ]; then
             continue_flag="" #intentionally not set
             echo "Starting new conversation"
-            new_conversation=$FALSE
+            first_time_through=$FALSE
         else
             continue_flag="--continue"
             echo "Continuing conversation"
@@ -114,7 +120,7 @@ replaceSourceWithGeneratedCode() { ## parameter 1 is new_conversation
 
 # commit changes if new code passes tests
 commit_changes () {
-        commitMessage="AI generated changes to $source_file to pass tests in $test_file"
+        commitMessage="AI refactored $source_file, while still to passing tests in $test_file"
 
         git add "$source_file" "$test_file" && git commit -m "$commitMessage"
         gitStatus=$?
@@ -139,6 +145,7 @@ exit_triumphantly() {
 
 
 ## MAIN starts here
+echo "++EXPERIMENTAL REFACTORING TO PASS TESTS++"
 # Do validation
 checkParameters
 # Get the module name from the parameter
@@ -159,12 +166,11 @@ if [ -n "$LLM_MODEL" ]; then
         llmModelParameter=## intentionally not set
 fi
 # Run initial tests, and exit if they all work
+first_time_through=$TRUE
 checkCode
-exitIfTestsPassFirstTime
 
 # Set up "magic loop" to call LLM and run tests again
 attempt=0
-new_conversation=$TRUE
 echo "Planning to change $source_file based on tests in $test_file"
 
 # Magic Loop here
