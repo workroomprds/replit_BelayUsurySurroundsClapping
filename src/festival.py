@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 
-from datetime import date, timedelta
+from datetime import date
+from enum import Enum, auto
 
-FESTIVAL_WESTERN = 'western'
-FESTIVAL_WINTER = 'winter'
+class FestivalType(Enum):
+    WESTERN = auto()
+    WINTER = auto()
 
-def festival(year, festival_type):
-    if festival_type == FESTIVAL_WESTERN:
+def festival(year: int, festival_type: FestivalType) -> date:
+    if festival_type == FestivalType.WESTERN:
         return calculate_western_festival(year)
-    elif festival_type == FESTIVAL_WINTER:
+    elif festival_type == FestivalType.WINTER:
         return calculate_winter_festival(year)
     else:
         raise ValueError("Invalid festival type")
 
-def calculate_western_festival(year):
+def calculate_western_festival(year: int) -> date:
     a = year % 19
     b = year // 100
     c = year % 100
@@ -30,11 +32,14 @@ def calculate_western_festival(year):
     day = ((h + l - 7 * m + 114) % 31) + 1
     return date(year, month, day)
 
-def calculate_winter_festival(year):
-    # Winter festival is always on December 25th, except for 2022 when it's on December 31st
+def calculate_winter_festival(year: int) -> date:
     if year == 2022:
         return date(year, 12, 31)
     elif year == 2021:
         return date(year, 1, 1)
     else:
         return date(year, 12, 25)
+
+# For backwards compatibility
+FESTIVAL_WESTERN = FestivalType.WESTERN
+FESTIVAL_WINTER = FestivalType.WINTER
