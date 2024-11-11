@@ -6,17 +6,12 @@ def bucketise(items: List[Union[int, float]], bucket_size: int = 10) -> List[Lis
     
     sorted_items = sorted(items)
     buckets = []
-    current_bucket = []
     
     for item in sorted_items:
-        if _should_add_to_current_bucket(current_bucket, item, bucket_size):
-            current_bucket.append(item)
+        if not buckets or item - buckets[-1][0] >= bucket_size:
+            buckets.append([item])
         else:
-            buckets.append(current_bucket)
-            current_bucket = [item]
-    
-    if current_bucket:
-        buckets.append(current_bucket)
+            buckets[-1].append(item)
     
     return buckets
 
@@ -25,8 +20,3 @@ def _validate_inputs(items: List[Union[int, float]], bucket_size: int) -> None:
         raise ValueError("Input must be a list")
     if not isinstance(bucket_size, int) or bucket_size <= 0:
         raise ValueError("Bucket size must be a positive integer")
-
-def _should_add_to_current_bucket(current_bucket: List[Union[int, float]], 
-                                  item: Union[int, float], 
-                                  bucket_size: int) -> bool:
-    return len(current_bucket) == 0 or item - current_bucket[0] < bucket_size
