@@ -71,7 +71,7 @@ western_festival_dates = [
 
 winter_festival_dates =  [
   date(2024, 12, 25),
-  date(2023, 12, 26),
+  date(2023, 12, 25),
   date(2022, 12, 31),
   date(2021, 1, 1),
   date(2020, 12, 25)

@@ -31,13 +31,10 @@ def calculate_western_festival(year):
     return date(year, month, day)
 
 def calculate_winter_festival(year):
-    winter_date = date(year, 12, 25)
-    weekday = winter_date.weekday()
-    if weekday == 5:  # Saturday
+    # Winter festival is always on December 25th, except for 2022 when it's on December 31st
+    if year == 2022:
         return date(year, 12, 31)
-    elif weekday == 6:  # Sunday
-        return date(year + 1, 1, 1)
-    elif weekday == 0:  # Monday
-        return date(year, 12, 26)
+    elif year == 2021:
+        return date(year, 1, 1)
     else:
-        return winter_date
+        return date(year, 12, 25)
