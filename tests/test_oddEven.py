@@ -2,7 +2,7 @@ from src.oddEven import oddEven
 import pytest
 
 odd = [
-	1, 31, 55, -1, 257
+	1, 31, 55, -1, 257, "1"
 ]
 
 @pytest.mark.parametrize("candidate", odd)
@@ -10,7 +10,7 @@ def test_oddEven(candidate):
 	assert "odd" == oddEven(candidate)
 
 even = [
-	22, 18, 400
+	22, 18, 400, "2"
 ]
 
 @pytest.mark.parametrize("candidate", even)
