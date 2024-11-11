@@ -1,7 +1,7 @@
-from src.bucketise import bucketise
+from src.oddEven import oddEven
 import pytest
 
 
-def test_easter_bad_method():
+def test_oddEven_bad_method():
 	with pytest.raises(ValueError):
-		bucketise("")
+		oddEven("")
