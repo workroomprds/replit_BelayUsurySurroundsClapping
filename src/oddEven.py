@@ -3,14 +3,13 @@
 def oddEven(number):
     if isinstance(number, str):
         try:
-            number = int(number)
+            number = float(number)
         except ValueError:
             raise ValueError("Input must be a number or a string representation of a number")
     elif not isinstance(number, (int, float)):
         raise ValueError("Input must be a number or a string representation of a number")
     
-    if isinstance(number, float):
-        number = int(number)
+    number = int(float(number))
     
     if number % 2 == 0:
         return "even"
