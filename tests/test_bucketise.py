@@ -11,6 +11,10 @@ steven = [
 ]
 
 
+@pytest.mark.parametrize("candidate", plod)
+def test_bucketise(candidate):
+	assert "plod" == bucketise(candidate)
+
 def test_easter_bad_method():
 	with pytest.raises(ValueError):
 		bucketise("")
