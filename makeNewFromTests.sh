@@ -7,8 +7,12 @@ readonly MAX_ATTEMPTS=3
 readonly TEST_FILE_PREFIX="./tests/test_"
 readonly SOURCE_FILE_PREFIX="./src/"
 readonly LLM_TEMPLATE=rewrite_python_to_pass_tests
-readonly LLM_MODEL="claude-3.5-sonnet" ## comment out to use default, or if template contains model. Keep the -m at start
+readonly LLM_MODEL="claude-3.5-sonnet" ## comment out to use default, or if template contains model.
 #readonly STREAMING="--no-stream"  ## comment out to stream
+
+# human-readable values
+readonly TRUE=0
+readonly FALSE=1
 readonly EXIT_SUCCESS=0
 readonly EXIT_NO_PARAMETER=1
 readonly EXIT_TEST_FILE_NOT_FOUND=2
@@ -62,23 +66,13 @@ exitIfTestsPassFirstTime() {
         fi
 }
 
-# message on success
-success_message() {
-                coverage_output=$(coverage report -m "$source_file")
-                ##echo $coverage_output
-                coverage_percentage=$(echo "$coverage_output" | awk 'NR==5 {print $NF}')
-                echo "Coverage for $source_file: $coverage_percentage" 
-                echo "All tests in $test_file passed – code in $source_file is ready for inspection"
-}
-
 # run tests / checks and handle results
 checkCode() {
         test_results="$(pytest --cov --quiet --tb=line "$test_file")"
         pytest_exit_code=$?
         echo "pytest_exit_code $pytest_exit_code"
         if [ $pytest_exit_code -eq 0 ]; then
-                success_message
-                return 0
+                exit_triumphantly
         else
                 echo "Tests failed."
                 echo "$test_results"
@@ -90,9 +84,10 @@ checkCode() {
 replaceSourceWithGeneratedCode() { ## parameter 1 is new_conversation
         # code_contents and test_results may be different each time
         code_contents="$(< "$source_file")"
-        if [ "$new_conversation" ]; then
+        if [ "$new_conversation" -eq $TRUE ]; then
             continue_flag="" #intentionally not set
             echo "Starting new conversation"
+            new_conversation=$FALSE
         else
             continue_flag="--continue"
             echo "Continuing conversation"
@@ -105,8 +100,9 @@ replaceSourceWithGeneratedCode() { ## parameter 1 is new_conversation
                 -p tests "$test_contents" \
                 -p test_results "$test_results" \
                 -p input "" \
-                "$continue_flag" \
+                $continue_flag \
                 $STREAMING \
+                "" \
                 > "$source_file"
         llm_exit_code=$?
         if [ $llm_exit_code -eq 0 ]; then
@@ -124,12 +120,25 @@ commit_changes () {
 
         git add "$source_file" "$test_file" && git commit -m "$commitMessage"
         gitStatus=$?
-        if [ $gitStatus ] ; then
+        if [ "$gitStatus" -eq $TRUE ] ; then
                 echo "Your tests, and the generated source, have been committed to the repository"
         else
                 echo "While the generated code passes the tests, git stage or commit failed with error: $gitStatus . Perhaps the files match those already commited, so «git add» did nothing?"
         fi
 }
+
+# message on success
+exit_triumphantly() {
+                commit_changes
+                coverage_output=$(coverage report -m "$source_file")
+                ##echo $coverage_output
+                coverage_percentage=$(echo "$coverage_output" | awk 'NR==5 {print $NF}')
+                echo "Coverage for $source_file: $coverage_percentage" 
+                echo "All tests in $test_file passed – code in $source_file is ready for inspection"
+                exit $EXIT_SUCCESS
+}
+
+
 
 ## MAIN starts here
 # Do validation
@@ -157,25 +166,21 @@ exitIfTestsPassFirstTime
 
 # Set up "magic loop" to call LLM and run tests again
 attempt=0
-new_conversation=true
+new_conversation=$TRUE
 echo "Planning to change $source_file based on tests in $test_file"
 
-while [ $attempt -lt $MAX_ATTEMPTS ] && [ $pytest_exit_code -ne 0 ] ; do
+# Magic Loop here
+while [ $attempt -lt $MAX_ATTEMPTS ] ; do # no need for  && [ $pytest_exit_code -ne 0 ]
 	attempt=$((attempt+1))
         echo "Attempt $attempt"
         if [ $attempt -le $MAX_ATTEMPTS ]; then
-                if replaceSourceWithGeneratedCode "$new_conversation"; then
-                    if checkCode; then
-                        commit_changes
-                        success_messages
-                        exit $EXIT_SUCCESS # leave if tests pass
-                    fi
-                    new_conversation=false
+                if replaceSourceWithGeneratedCode; then
+                    checkCode ## which can EXIT_SUCCESSFULLY
                 fi
         fi
  done
 
-# closing messages
+# persistenly trying hasn't helped: closing message
 echo "Maximum attempts reached ($MAX_ATTEMPTS)"
 echo "Exiting as generated code still does not pass tests"
 exit $EXIT_TESTS_FAILED_AFTER_ITERATIONS
