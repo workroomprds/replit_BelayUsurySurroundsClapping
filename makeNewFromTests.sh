@@ -1,7 +1,5 @@
 #!/bin/bash
 
-## !! Check what's going on with swecond time through – I think it\s missing a "". USe llm logs -n 15 to look at last 15 logs
-
 # configuration
 readonly MAX_ATTEMPTS=3
 readonly TEST_FILE_PREFIX="./tests/test_"
