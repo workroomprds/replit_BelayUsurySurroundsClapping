@@ -8,6 +8,6 @@ def oddEven(number):
         number = int(number)
     
     if number % 2 == 0:
-        return "Even"
+        return "even"
     else:
-        return "Odd"
+        return "odd"
