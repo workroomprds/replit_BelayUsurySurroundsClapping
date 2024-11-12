@@ -14,6 +14,8 @@ import pytest
     (5, "AD"),
 		(11, "AB"),
 		(13, "BA"),
+		(71, "AH"),
+		(73, "HA")
 ])
 def test_fluvianToArabic(arabic, fluvian):
 	assert fluvianToArabic(fluvian) == arabic
