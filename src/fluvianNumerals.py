@@ -22,7 +22,14 @@ def fluvianToArabic(fluvian):
             total += 2
             i += 2
         else:
-            total += fluvian_map.get(fluvian[i], 0)
+            current_value = fluvian_map.get(fluvian[i], 0)
+            if i < len(fluvian) - 1:
+                next_value = fluvian_map.get(fluvian[i+1], 0)
+                if current_value < next_value:
+                    total += next_value - current_value
+                    i += 2
+                    continue
+            total += current_value
             i += 1
     return total
 
@@ -47,6 +54,7 @@ import pytest
     (3, "AAA"),
     (4, "AAD"),
     (5, "AD"),
+    (11, "AB")
 ])
 def test_fluvianToArabic(arabic, fluvian):
     assert fluvianToArabic(fluvian) == arabic
