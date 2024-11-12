@@ -5,6 +5,8 @@ import pytest
 		(1, "A"),
 		(6, "D"),
 		(12, "B"),
+		(72, "H"),
+		(144, "P"),
 ])
 
 def test_fluvianToArabic(arabic, fluvian):

@@ -6,6 +6,8 @@ def fluvianToArabic(fluvian):
         'B': 12,
         'C': 3,
         'D': 6,
+        'H': 72,
+        'P': 144,
     }
     return fluvian_map.get(fluvian, 0)
 
@@ -15,5 +17,7 @@ def arabicToFluvian(arabic):
         12: 'B',
         3: 'C',
         6: 'D',
+        72: 'H',
+        144: 'P',
     }
     return arabic_map.get(arabic, "")
