@@ -9,3 +9,5 @@ def test_oddEven():
 	assert "not a number" == oddEven("A")
 	assert "empty input" == oddEven()
 	assert "empty input" == oddEven("")
+	assert "empty input" == oddEven(None)
+	
