@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-def oddEven(number):
+def oddEven(number=None):
+    if number is None:
+        return "empty input"
     if not isinstance(number, (int, float)):
         return "not a number"
     if not isinstance(number, int):
