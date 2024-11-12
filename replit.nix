@@ -1,7 +1,8 @@
 {pkgs}: {
   deps = [
+    pkgs.shellcheck
+    pkgs.ruff
     pkgs.nano
-    pkgs.haskellPackages.ShellCheck
     pkgs.jq
     pkgs.vim
     pkgs.q
