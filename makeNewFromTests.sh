@@ -6,6 +6,7 @@ readonly TEST_FILE_PREFIX="./tests/test_"
 readonly SOURCE_FILE_PREFIX="./src/"
 readonly LLM_TEMPLATE=rewrite_python_to_pass_tests
 readonly LLM_MODEL="claude-3.5-sonnet" ## comment out to use default, or if template contains model.
+#readonly LLM_MODEL="4o" ## comment out to use default, or if template contains model.
 #readonly STREAMING="--no-stream"  ## comment out to stream
 
 # human-readable values
@@ -158,6 +159,7 @@ if [ -n "$LLM_MODEL" ]; then
         else
         llmModelParameter=## intentionally not set
 fi
+echo $llmModelParameter
 # Run initial tests, and exit if they all work
 checkCode
 exitIfTestsPassFirstTime
