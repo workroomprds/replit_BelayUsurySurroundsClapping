@@ -10,4 +10,5 @@ def test_oddEven():
 	assert "empty input" == oddEven()
 	assert "empty input" == oddEven("")
 	assert "empty input" == oddEven(None)
-	
+	assert "odd" == oddEven("1")
+
