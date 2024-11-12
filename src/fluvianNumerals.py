@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 
 def fluvianToArabic(fluvian):
-    if fluvian == "A":
-        return 1
-    # Implement the rest of the conversion logic here
-    return 0
+    fluvian_map = {
+        'A': 1,
+        'B': 12,
+        'C': 3,
+        'D': 6,
+    }
+    return fluvian_map.get(fluvian, 0)
 
 def arabicToFluvian(arabic):
-    if arabic == 1:
-        return "A"
-    # Implement the rest of the conversion logic here
-    return ""
+    arabic_map = {
+        1: 'A',
+        12: 'B',
+        3: 'C',
+        6: 'D',
+    }
+    return arabic_map.get(arabic, "")
