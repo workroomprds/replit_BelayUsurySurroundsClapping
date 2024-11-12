@@ -85,7 +85,7 @@ checkCode() {
 }
 
 # pass to AI via LLM tool
-replaceSourceWithGeneratedCode() { ## parameter 1 is first_time_through
+replaceSourceWithGeneratedCode() { 
         # code_contents and test_results may be different each time
         code_contents="$(< "$source_file")"
         if [ "$first_time_through" -eq $TRUE ]; then
