@@ -120,7 +120,7 @@ replaceSourceWithGeneratedCode() {
 
 # commit changes if new code passes tests
 commit_changes () {
-        commitMessage="AI refactored $source_file, while still to passing tests in $test_file"
+        commitMessage="AI refactored $source_file, while still passing tests in $test_file"
 
         git add "$source_file" "$test_file" && git commit -m "$commitMessage"
         gitStatus=$?
@@ -171,7 +171,7 @@ checkCode
 
 # Set up "magic loop" to call LLM and run tests again
 attempt=0
-echo "Planning to change $source_file based on tests in $test_file"
+echo "Planning to refactor $source_file based on tests in $test_file"
 
 # Magic Loop here
 while [ $attempt -lt $MAX_ATTEMPTS ] ; do # no need for  && [ $pytest_exit_code -ne 0 ]
