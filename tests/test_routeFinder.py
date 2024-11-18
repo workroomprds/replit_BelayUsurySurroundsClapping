@@ -15,6 +15,7 @@ def test_two_point_route(): #should return a list of lists
 def test_three_point_route():
 	routes = [("A", "B"), ("B", "C")]
 	assert findRoute(routes, "A", "C") == [["A", "B", "C"]]
+	assert findRoute(routes, "C", "A") == [["C", "B", "A"]]
 
 
 
