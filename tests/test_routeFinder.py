@@ -17,5 +17,10 @@ def test_three_point_route():
 	assert findRoute(routes, "A", "C") == [["A", "B", "C"]]
 	assert findRoute(routes, "C", "A") == [["C", "B", "A"]]
 
+def test_route_offers_alternatives():
+	routes = [("A", "B"), ("B", "C"), ["A", "C"]]
+	assert len(findRoute(routes, "A", "C")) == 2
+	assert ["A", "C"] in findRoute(routes, "A", "C")
+	assert ["A", "B", "C"] in findRoute(routes, "A", "C")
 
 

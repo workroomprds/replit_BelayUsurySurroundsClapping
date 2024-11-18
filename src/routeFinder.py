@@ -15,14 +15,11 @@ def findRoute(routes, start, end):
             if next_point and next_point not in path:
                 new_path = path + [next_point]
                 if next_point == end:
-                    return new_path
-                result = dfs(next_point, new_path)
-                if result:
-                    return result
-        
-        return None
+                    yield new_path
+                else:
+                    yield from dfs(next_point, new_path)
 
-    result = dfs(start, [start])
-    if result:
-        return [result] if len(result) == 2 else [result]
+    all_routes = list(dfs(start, [start]))
+    if all_routes:
+        return [route for route in all_routes if route[-1] == end]
     return None
