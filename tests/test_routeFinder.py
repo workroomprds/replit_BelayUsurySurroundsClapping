@@ -1,9 +1,10 @@
-from src.routeFinder import findRoute	
+from src.routeFinder import findRoute, makep2p
 import pytest
 
 
 def test_routeFinder():
 	assert callable(findRoute)
+	assert callable(makep2p)
 	
 def test_two_point_route(): #should return a list of lists
 	routes = [("A", "B"), ("B", "C")]
