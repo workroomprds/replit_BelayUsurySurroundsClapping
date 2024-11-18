@@ -66,7 +66,6 @@ def test_calculates_smallest_duration():
 	assert ["A", "C"] == findRoute(routesShortAtoC, "A", "C").minDuration.route
 	assert 40 == findRoute(routesShortAtoC, "A", "C").minDuration.duration
 
-
 def test_longer_route():
 	routes = [
 	    makep2p("A", "B"),
@@ -80,6 +79,8 @@ def test_longer_route():
 
 
 def test_errors():
+	assert makep2p(None) == "ERROR: no routes supplied to makep2p"
+	assert makep2p([]) == "ERROR: no routes supplied to makep2p"
 	assert findRoute(None, "A", "B") == "ERROR: no routes supplied"
 	assert findRoute([], "A", "B") == "ERROR: no routes supplied"
 	assert findRoute([makep2p("A", "B")], "C",

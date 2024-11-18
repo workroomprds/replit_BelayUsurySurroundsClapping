@@ -6,7 +6,11 @@ class Point2Point:
         self.distance = 1 if distance is None else distance
         self.duration = 60 if duration is None else duration
 
-def makep2p(start, end, distance=None, duration=None):
+def makep2p(start, end=None, distance=None, duration=None):
+    if start is None or end is None:
+        return "ERROR: no routes supplied to makep2p"
+    if isinstance(start, list) and not start:
+        return "ERROR: no routes supplied to makep2p"
     return Point2Point(start, end, distance, duration)
 
 class Route:
