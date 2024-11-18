@@ -26,3 +26,9 @@ def test_route_offers_alternatives():
 def test_longer_route():
 	routes = [("A", "B"), ("B", "C"),["A", "C"],("C", "D"), ("D", "E"), ("E", "F")]
 	assert ["A", "C", "D", "E", "F"] in findRoute(routes, "A", "F")
+
+def test_errors():
+	assert findRoute(None, "A", "B") == "ERROR: no routes supplied"
+	assert findRoute([], "A", "B") == "ERROR: no routes supplied"
+	assert findRoute([("A", "B")], "C", "B") == "ERROR: start point is not in routes"
+	assert findRoute([("A", "B")], "A", "C") == "ERROR: end point is not in routes"
