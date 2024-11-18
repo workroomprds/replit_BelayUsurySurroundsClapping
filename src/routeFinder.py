@@ -15,7 +15,7 @@ class Point2Point:
         return (self.start, self.end)
 
 def makep2p(start: str, end: Optional[str] = None, distance: Optional[float] = None, duration: Optional[float] = None) -> Union[str, Point2Point]:
-    if start is None or end is None or (isinstance(start, list) and not start):
+    if not start or not end:
         return "ERROR: no routes supplied to makep2p"
     return Point2Point(start, end, distance or 1, duration or 60)
 
@@ -43,13 +43,16 @@ class RouteResult:
     def allRoutes(self) -> List[List[str]]:
         return [route.route for route in self.all_routes]
 
+    def _min_route(self, key_func):
+        return min(self.all_routes, key=key_func) if self.all_routes else None
+
     @property
     def shortestRoute(self) -> Optional[Route]:
-        return min(self.all_routes, key=lambda r: r.distance) if self.all_routes else None
+        return self._min_route(lambda r: r.distance)
 
     @property
     def fewestStops(self) -> Optional[Route]:
-        return min(self.all_routes, key=lambda r: len(r.route)) if self.all_routes else None
+        return self._min_route(lambda r: len(r.route))
 
     @property
     def minDistance(self) -> Optional[Route]:
@@ -57,12 +60,9 @@ class RouteResult:
 
     @property
     def minDuration(self) -> Optional[Route]:
-        return min(self.all_routes, key=lambda r: r.duration) if self.all_routes else None
+        return self._min_route(lambda r: r.duration)
 
-def findRoute(routes: List[Union[Point2Point, Tuple[str, str]]], start: str, end: str) -> Union[str, RouteResult]:
-    if not routes:
-        return "ERROR: no routes supplied"
-    
+def create_route_map(routes: List[Union[Point2Point, Tuple[str, str]]]) -> Tuple[set, dict]:
     all_points = set()
     route_map = {}
 
@@ -78,20 +78,31 @@ def findRoute(routes: List[Union[Point2Point, Tuple[str, str]]], start: str, end
         route_map.setdefault(p2p.start, []).append(p2p)
         route_map.setdefault(p2p.end, []).append(Point2Point(p2p.end, p2p.start, p2p.distance, p2p.duration))
 
-    if start not in all_points:
-        return "ERROR: start point is not in routes"
-    if end not in all_points:
-        return "ERROR: end point is not in routes"
+    return all_points, route_map
 
-    def dfs(current: str, path: List[Point2Point], visited: set):
+def dfs(start: str, end: str, route_map: dict) -> List[List[Point2Point]]:
+    def dfs_recursive(current: str, path: List[Point2Point], visited: set):
         if current == end:
             yield path
         for route in route_map.get(current, []):
             next_point = route.end
             if next_point not in visited:
-                yield from dfs(next_point, path + [route], visited | {next_point})
+                yield from dfs_recursive(next_point, path + [route], visited | {next_point})
 
-    all_routes = list(dfs(start, [], {start}))
+    return list(dfs_recursive(start, [], {start}))
+
+def findRoute(routes: List[Union[Point2Point, Tuple[str, str]]], start: str, end: str) -> Union[str, RouteResult]:
+    if not routes:
+        return "ERROR: no routes supplied"
+    
+    all_points, route_map = create_route_map(routes)
+
+    if start not in all_points:
+        return "ERROR: start point is not in routes"
+    if end not in all_points:
+        return "ERROR: end point is not in routes"
+
+    all_routes = dfs(start, end, route_map)
     valid_routes = [Route(route) for route in all_routes if route[-1].end == end]
     
     if not valid_routes:
