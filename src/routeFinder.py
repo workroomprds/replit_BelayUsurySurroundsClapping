@@ -28,4 +28,9 @@ def findRoute(routes, start, end):
                 yield from dfs(next_point, new_path)
 
     all_routes = list(dfs(start, [start]))
-    return [route for route in all_routes if route[-1] == end]
+    valid_routes = [route for route in all_routes if route[-1] == end]
+    
+    if not valid_routes:
+        return "ERROR: there is no connection between start and end"
+    
+    return valid_routes

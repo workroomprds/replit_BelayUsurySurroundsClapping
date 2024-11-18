@@ -32,3 +32,4 @@ def test_errors():
 	assert findRoute([], "A", "B") == "ERROR: no routes supplied"
 	assert findRoute([("A", "B")], "C", "B") == "ERROR: start point is not in routes"
 	assert findRoute([("A", "B")], "A", "C") == "ERROR: end point is not in routes"
+	assert findRoute([("A", "B"), ("C", "D")], "A", "D") == "ERROR: there is no connection between start and end"
