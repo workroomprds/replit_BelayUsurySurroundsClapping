@@ -13,6 +13,7 @@ class RouteResult:
     def __init__(self, all_routes):
         self.allRoutes = all_routes
         self.shortestRoute = min(all_routes, key=len) if all_routes else None
+        self.fewestStops = self.shortestRoute
 
 def findRoute(routes, start, end):
     if not routes:

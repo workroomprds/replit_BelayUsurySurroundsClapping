@@ -36,7 +36,7 @@ def test_route_offers_alternatives():
 	assert ["A", "C"] in findRoute(routes, "A", "C").allRoutes
 	assert ["A", "B", "C"] in findRoute(routes, "A", "C").allRoutes
 	#the route with the smallest aggregate distance
-	assert ["A", "C"] == findRoute(routes, "A", "C").shortestRoute
+	assert ["A", "C"] == findRoute(routes, "A", "C").fewestStops
 
 
 def test_longer_route():
