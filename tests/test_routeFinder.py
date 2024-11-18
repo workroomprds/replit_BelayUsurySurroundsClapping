@@ -57,6 +57,11 @@ def test_calculates_shortest_distance():
 	assert ["A", "C"] == findRoute(routesShortAtoC, "A", "C").minDistance.route
 	assert 4 == findRoute(routesShortAtoC, "A", "C").minDistance.distance
 
+def test_calculates_smallest_duration():
+	routes = [makep2p("A", "B", 2, 20), makep2p("B", "C", 3, 30), makep2p("A", "C", 10, 100)]
+	assert ["A", "B", "C"] == findRoute(routes, "A", "C").minDuration.route
+	assert 50 == findRoute(routes, "A", "C").minDuration.duration
+
 
 def test_longer_route():
 	routes = [
