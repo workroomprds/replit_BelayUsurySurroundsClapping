@@ -36,8 +36,11 @@ def test_route_offers_alternatives():
 	assert ["A", "C"] in findRoute(routes, "A", "C").allRoutes
 	assert ["A", "B", "C"] in findRoute(routes, "A", "C").allRoutes
 	#the route with the smallest aggregate distance
-	assert ["A", "C"] == findRoute(routes, "A", "C").fewestStops
+	assert ["A", "C"] == findRoute(routes, "A", "C").fewestStops.route
 
+def test_calculates_distance():
+	routes = [makep2p("A", "B", 2, 20), makep2p("B", "C", 3, 30)]
+	assert ["A", "B", "C"] == findRoute(routes, "A", "C").fewestStops.route
 
 def test_longer_route():
 	routes = [

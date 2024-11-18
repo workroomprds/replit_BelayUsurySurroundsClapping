@@ -9,10 +9,14 @@ class Point2Point:
 def makep2p(start, end, distance=None, duration=None):
     return Point2Point(start, end, distance, duration)
 
+class Route:
+    def __init__(self, path):
+        self.route = path
+
 class RouteResult:
     def __init__(self, all_routes):
-        self.allRoutes = all_routes
-        self.shortestRoute = min(all_routes, key=len) if all_routes else None
+        self.allRoutes = [route.route for route in all_routes]
+        self.shortestRoute = min(all_routes, key=lambda r: len(r.route)) if all_routes else None
         self.fewestStops = self.shortestRoute
 
 def findRoute(routes, start, end):
@@ -54,7 +58,7 @@ def findRoute(routes, start, end):
                 yield from dfs(next_point, path + [next_point])
 
     all_routes = list(dfs(start, [start]))
-    valid_routes = [route for route in all_routes if route[-1] == end]
+    valid_routes = [Route(route) for route in all_routes if route[-1] == end]
     
     if not valid_routes:
         return "ERROR: there is no connection between start and end"
