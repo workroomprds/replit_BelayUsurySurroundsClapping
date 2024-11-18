@@ -9,6 +9,10 @@ class Point2Point:
 def makep2p(start, end, distance=None, duration=None):
     return Point2Point(start, end, distance, duration)
 
+class RouteResult:
+    def __init__(self, all_routes):
+        self.allRoutes = all_routes
+
 def findRoute(routes, start, end):
     if not routes:
         return "ERROR: no routes supplied"
@@ -54,7 +58,6 @@ def findRoute(routes, start, end):
     if not valid_routes:
         return "ERROR: there is no connection between start and end"
     
-    return valid_routes
+    return RouteResult(valid_routes)
 
-# The following line is added to make the functions importable
 __all__ = ['findRoute', 'makep2p']
