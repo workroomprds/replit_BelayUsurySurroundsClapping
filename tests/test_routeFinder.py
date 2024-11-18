@@ -43,6 +43,11 @@ def test_calculates_distance():
 	assert ["A", "B", "C"] == findRoute(routes, "A", "C").fewestStops.route
 	assert 5 == findRoute(routes, "A", "C").fewestStops.distance
 
+def test_calculates_duration():
+	routes = [makep2p("A", "B", 2, 40), makep2p("B", "C", 3, 30)]
+	assert ["A", "B", "C"] == findRoute(routes, "A", "C").fewestStops.route
+	assert 70 == findRoute(routes, "A", "C").fewestStops.duration
+
 def test_longer_route():
 	routes = [
 	    makep2p("A", "B"),

@@ -13,6 +13,7 @@ class Route:
     def __init__(self, path):
         self.route = [p.step[0] for p in path] + [path[-1].step[1]]
         self.distance = sum(p.distance for p in path)
+        self.duration = sum(p.duration for p in path)
 
 class RouteResult:
     def __init__(self, all_routes):
