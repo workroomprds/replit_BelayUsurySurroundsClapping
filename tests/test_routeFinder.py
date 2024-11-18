@@ -24,5 +24,5 @@ def test_route_offers_alternatives():
 	assert ["A", "B", "C"] in findRoute(routes, "A", "C")
 
 def test_longer_route():
-	routes = [("A", "B"), ("B", "C"),["A", "C"],("C", "D"), ("D", "E")]
-	assert ["A", "C", "D", "E"] in findRoute(routes, "A", "E")
+	routes = [("A", "B"), ("B", "C"),["A", "C"],("C", "D"), ("D", "E"), ("E", "F")]
+	assert ["A", "C", "D", "E", "F"] in findRoute(routes, "A", "F")
