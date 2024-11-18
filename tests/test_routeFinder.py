@@ -10,7 +10,7 @@ def test_makep2p():
 	assert ("A", "B") == makep2p("A", "B")
 	
 def test_two_point_route(): #should return a list of lists
-	routes = [("A", "B"), ("B", "C")]
+	routes = [makep2p("A", "B"), makep2p("B", "C")]
 	assert findRoute(routes, "A", "B") == [["A", "B"]]
 	assert findRoute(routes, "B", "A") == [["B", "A"]]
 	assert findRoute(routes, "B", "C") == [["B", "C"]]
