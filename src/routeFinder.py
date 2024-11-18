@@ -35,10 +35,8 @@ def findRoute(routes, start, end):
     
     return valid_routes
 
-def makep2p(routes):
-    # This function is not implemented in the original code
-    # but is required by the test. We'll implement a basic version.
-    return routes
+def makep2p(start, end):
+    return (start, end)
 
 # The following line is added to make the functions importable
 __all__ = ['findRoute', 'makep2p']

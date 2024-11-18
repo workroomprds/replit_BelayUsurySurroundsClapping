@@ -5,6 +5,9 @@ import pytest
 def test_routeFinder():
 	assert callable(findRoute)
 	assert callable(makep2p)
+
+def test_makep2p():
+	assert ("A", "B") == makep2p("A", "B")
 	
 def test_two_point_route(): #should return a list of lists
 	routes = [("A", "B"), ("B", "C")]
