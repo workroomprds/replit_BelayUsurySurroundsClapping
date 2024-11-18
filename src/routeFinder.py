@@ -12,6 +12,7 @@ def makep2p(start, end, distance=None, duration=None):
 class RouteResult:
     def __init__(self, all_routes):
         self.allRoutes = all_routes
+        self.shortestRoute = min(all_routes, key=len) if all_routes else None
 
 def findRoute(routes, start, end):
     if not routes:
@@ -49,8 +50,7 @@ def findRoute(routes, start, end):
                 next_point = step[0]
             
             if next_point and next_point not in path:
-                new_path = path + [next_point]
-                yield from dfs(next_point, new_path)
+                yield from dfs(next_point, path + [next_point])
 
     all_routes = list(dfs(start, [start]))
     valid_routes = [route for route in all_routes if route[-1] == end]
