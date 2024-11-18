@@ -7,8 +7,10 @@ def test_routeFinder():
 	assert callable(makep2p)
 
 def test_makep2p():
-	assert ("A", "B") == makep2p("A", "B").step
-	
+	assert ("A", "B") == makep2p("A", "B", 5, 10).step
+	assert 5 == makep2p("A", "B", 5, 10).distance
+	assert 10 == makep2p("A", "B", 5, 10).duration
+
 def test_two_point_route(): #should return a list of lists
 	routes = [makep2p("A", "B"), makep2p("B", "C")]
 	assert findRoute(routes, "A", "B") == [["A", "B"]]

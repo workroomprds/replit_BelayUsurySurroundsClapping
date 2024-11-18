@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 class Point2Point:
-    def __init__(self, start, end):
+    def __init__(self, start, end, distance=0, duration=0):
         self.step = (start, end)
+        self.distance = distance
+        self.duration = duration
 
-def makep2p(start, end):
-    return Point2Point(start, end)
+def makep2p(start, end, distance=0, duration=0):
+    return Point2Point(start, end, distance, duration)
 
 def findRoute(routes, start, end):
     if not routes:
