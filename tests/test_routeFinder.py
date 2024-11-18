@@ -6,9 +6,7 @@ def test_routeFinder():
 	assert callable(findRoute)
 	
 def test_two_point_route():
-	routes = [("A", "B")]
+	routes = [("A", "B"), ("B", "C")]
 	assert findRoute(routes, "A", "B") == ["A", "B"]
 	assert findRoute(routes, "B", "A") == ["B", "A"]
-		
-
-
+	assert findRoute(routes, "B", "C") == ["B", "C"]
